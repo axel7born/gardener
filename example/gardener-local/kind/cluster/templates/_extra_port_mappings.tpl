@@ -17,6 +17,7 @@
   #  way currently to swap the dns record of the shoot's `kube-apiserver` once it is migrated to this seed.
   hostPort: 9443
 {{- end }}
+  # for dualstack ingress we need both ipv4 and ipv6 address here.
   listenAddress: {{ $listenAddress }}
 {{- end }}
 {{- end }}

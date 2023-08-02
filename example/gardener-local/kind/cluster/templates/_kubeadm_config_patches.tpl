@@ -13,13 +13,15 @@
       authorization-mode: RBAC,Node
 {{- else }}
       authorization-mode: RBAC,Node,Webhook
-      authorization-webhook-config-file: /etc/gardener/controlplane/auth-webhook-kubeconfig-{{ .Values.environment }}-{{ .Values.networking.ipFamily }}.yaml
+      # .Values.networking.ipFamily would be `dual` for a dual stack kind cluster.
+      # Maybe, we should use env IPFAMILY here.
+      authorization-webhook-config-file: /etc/gardener/controlplane/auth-webhook-kubeconfig-{{ .Values.environment }}-ipv4.yaml
       authorization-webhook-cache-authorized-ttl: "0"
       authorization-webhook-cache-unauthorized-ttl: "0"
     extraVolumes:
     - name: gardener
-      hostPath: /etc/gardener/controlplane/auth-webhook-kubeconfig-{{ .Values.environment }}-{{ .Values.networking.ipFamily }}.yaml
-      mountPath: /etc/gardener/controlplane/auth-webhook-kubeconfig-{{ .Values.environment }}-{{ .Values.networking.ipFamily }}.yaml
+      hostPath: /etc/gardener/controlplane/auth-webhook-kubeconfig-{{ .Values.environment }}-ipv4.yaml
+      mountPath: /etc/gardener/controlplane/auth-webhook-kubeconfig-{{ .Values.environment }}-ipv4.yaml
       readOnly: true
       pathType: File
 {{- end }}

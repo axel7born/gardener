@@ -30,7 +30,11 @@ controllers:
     concurrentSyncs: 5
   service:
     concurrentSyncs: 5
-    hostIP: "127.0.0.1"
+    # We want to test with ipv6 traffic to the istio-ingressgateway.
+    # to configure dualstack we have to adapt example/gardener-local/kind/cluster/templates/_extra_port_mappings.tpl
+    # But it's not relevant, as the shoot will not talk to its controlplane via this path. As the node of a shoot is 
+    # a pod in the seed, it can talk to the istio-ingressgateway via it's cluster ip.
+    hostIP: "::1"
     zone0IP: "127.0.0.10"
     zone1IP: "127.0.0.11"
     zone2IP: "127.0.0.12"
