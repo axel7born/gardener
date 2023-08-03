@@ -21,4 +21,8 @@ spec:
     protocol: UDP
     targetPort: 9053
     nodePort: 30053
+  ipFamilies:
+  - IPv6
+  - IPv4
+  ipFamilyPolicy: PreferDualStack
 {{- end -}}

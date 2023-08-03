@@ -242,7 +242,7 @@ func (b *Botanist) computeKubeAPIServerSNIConfig() kubeapiserver.SNIConfig {
 			config.APIServerFQDN = b.Shoot.ComputeOutOfClusterAPIServerAddress(b.APIServerAddress, true)
 		}
 	}
-	// for the controlplane of an ipv6 shoot in an ipv4 seed config.AdvertiseAddress has to be 
+	// for the controlplane of an ipv6 shoot in an ipv4 seed config.AdvertiseAddress has to be
 	// the same ipfamily as the services cidr.
 	// just try with a hardcoded address for now.
 	config.AdvertiseAddress = "2002:db8:4::4"

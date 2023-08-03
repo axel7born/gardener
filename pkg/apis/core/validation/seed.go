@@ -241,7 +241,7 @@ func validateSeedNetworks(seedNetworks core.SeedNetworks, fldPath *field.Path, i
 
 	var (
 		//primaryIPFamily = helper.DeterminePrimaryIPFamily(seedNetworks.IPFamilies)
-		networks        []cidrvalidation.CIDR
+		networks []cidrvalidation.CIDR
 	)
 
 	if !inTemplate || len(seedNetworks.Pods) > 0 {

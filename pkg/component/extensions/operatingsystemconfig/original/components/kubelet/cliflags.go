@@ -65,6 +65,9 @@ func CLIFlags(kubernetesVersion *semver.Version, nodeLabels map[string]string, c
 	}
 
 	flags = append(flags, "--v=2")
+	// This is needed to prefer the ipv6 address over the ipv6 address in case the node has two addresses
+	// It's important for ipv6 only services with pods in the host network and for vpn, so that the ipv6 address of a node is used.
+	flags = append(flags, "--node-ip=\"::\"")
 
 	return flags
 }

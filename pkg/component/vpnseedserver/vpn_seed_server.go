@@ -21,7 +21,6 @@ import (
 	"strings"
 
 	"github.com/Masterminds/semver"
-	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
 	"google.golang.org/protobuf/types/known/durationpb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	istionetworkingv1beta1 "istio.io/api/networking/v1beta1"
@@ -42,6 +41,7 @@ import (
 	"k8s.io/utils/pointer"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
+	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
 	resourcesv1alpha1 "github.com/gardener/gardener/pkg/apis/resources/v1alpha1"
 	"github.com/gardener/gardener/pkg/component"
@@ -935,6 +935,11 @@ func (v *vpnSeedServer) getEnvoyConfig() string {
         protocol: TCP
         address: ` + fmt.Sprintf("%q", listenAddress) + `
         port_value: ` + fmt.Sprintf("%d", EnvoyPort) + `
+    additional_addresses:
+    - address:
+        socket_address:
+          address: "0.0.0.0"
+          port_value: ` + fmt.Sprintf("%d", EnvoyPort) + `
     listener_filters:
     - name: "envoy.filters.listener.tls_inspector"
       typed_config:

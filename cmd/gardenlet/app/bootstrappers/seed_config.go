@@ -46,7 +46,7 @@ func (s *SeedConfigChecker) Start(ctx context.Context) error {
 	shootInfo := &corev1.ConfigMap{}
 	if err := s.SeedClient.Get(ctx, kubernetes.Key(metav1.NamespaceSystem, constants.ConfigMapNameShootInfo), shootInfo); client.IgnoreNotFound(err) != nil {
 		return err
-	}	 else if errors.IsNotFound(err) {
+	} else if errors.IsNotFound(err) {
 		// Seed cluster does not seem to be managed by Gardener
 		// Fow a dualstack scenario we need to disable or adapt this check.
 		// return checkSeedConfigHeuristically(ctx, s.SeedClient, s.SeedConfig)
