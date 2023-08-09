@@ -89,9 +89,10 @@ config:
         services: 10.2.0.0/16
         shootDefaults:
           ipFamilies:
+          - IPv4
           - IPv6
-          pods: fd00:10:3::/56
-          services: fd00:10:4::/112
+          pods: 10.3.0.0/16
+          services: 10.4.0.0/16
 
       settings:
         excessCapacityReservation:
