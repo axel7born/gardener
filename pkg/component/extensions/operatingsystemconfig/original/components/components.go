@@ -48,4 +48,5 @@ type Context struct {
 	ValitailEnabled         bool
 	APIServerURL            string
 	Sysctls                 map[string]string
+	PreferIPv6              bool
 }

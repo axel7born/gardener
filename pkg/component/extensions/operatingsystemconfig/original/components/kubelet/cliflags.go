@@ -32,7 +32,7 @@ import (
 )
 
 // CLIFlags returns a list of kubelet CLI flags based on the provided parameters and for the provided Kubernetes version.
-func CLIFlags(kubernetesVersion *semver.Version, nodeLabels map[string]string, criName extensionsv1alpha1.CRIName, image *imagevector.Image, cliFlags components.ConfigurableKubeletCLIFlags) []string {
+func CLIFlags(kubernetesVersion *semver.Version, nodeLabels map[string]string, criName extensionsv1alpha1.CRIName, image *imagevector.Image, cliFlags components.ConfigurableKubeletCLIFlags, preferIPv6 bool) []string {
 	setCLIFlagsDefaults(&cliFlags)
 
 	var flags []string
@@ -67,9 +67,9 @@ func CLIFlags(kubernetesVersion *semver.Version, nodeLabels map[string]string, c
 	flags = append(flags, "--v=2")
 	// This is needed to prefer the ipv6 address over the ipv6 address in case the node has two addresses
 	// It's important for ipv6 only services with pods in the host network and for vpn, so that the ipv6 address of a node is used.
-	// TODO. Check how to make this dependant on the ip family of the shoot
-	//flags = append(flags, "--node-ip=\"::\"")
-
+	if preferIPv6 == true {
+		flags = append(flags, "--node-ip=\"::\"")
+	}
 	return flags
 }
 
