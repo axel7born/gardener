@@ -83,7 +83,7 @@ func (b *Botanist) DefaultOperatingSystemConfig() (operatingsystemconfig.Interfa
 				ValitailEnabled:     valitailEnabled,
 				ValiIngressHostName: valiIngressHost,
 				NodeLocalDNSEnabled: v1beta1helper.IsNodeLocalDNSEnabled(b.Shoot.GetInfo().Spec.SystemComponents, b.Shoot.GetInfo().Annotations),
-				PrimaryIPFamily: b.Shoot.GetInfo().Spec.Networking.IPFamilies[0],
+				PrimaryIPFamily:     b.Shoot.GetInfo().Spec.Networking.IPFamilies[0],
 			},
 		},
 		operatingsystemconfig.DefaultInterval,

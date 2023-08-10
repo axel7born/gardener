@@ -15,13 +15,13 @@
       authorization-mode: RBAC,Node,Webhook
       # .Values.networking.ipFamily would be `dual` for a dual stack kind cluster.
       # Maybe, we should use env IPFAMILY here.
-      authorization-webhook-config-file: /etc/gardener/controlplane/auth-webhook-kubeconfig-{{ .Values.environment }}-ipv4.yaml
+      authorization-webhook-config-file: /etc/gardener/controlplane/auth-webhook-kubeconfig-{{ .Values.environment }}-{{ if eq .Values.networking.ipFamily "dual" }}ipv4{{ else }}{{ .Values.networking.ipFamily }}{{ end }}.yaml
       authorization-webhook-cache-authorized-ttl: "0"
       authorization-webhook-cache-unauthorized-ttl: "0"
     extraVolumes:
     - name: gardener
-      hostPath: /etc/gardener/controlplane/auth-webhook-kubeconfig-{{ .Values.environment }}-ipv4.yaml
-      mountPath: /etc/gardener/controlplane/auth-webhook-kubeconfig-{{ .Values.environment }}-ipv4.yaml
+      hostPath: /etc/gardener/controlplane/auth-webhook-kubeconfig-{{ .Values.environment }}-{{ if eq .Values.networking.ipFamily "dual" }}ipv4{{ else }}{{ .Values.networking.ipFamily }}{{ end }}.yaml
+      mountPath: /etc/gardener/controlplane/auth-webhook-kubeconfig-{{ .Values.environment }}-{{ if eq .Values.networking.ipFamily "dual" }}ipv4{{ else }}{{ .Values.networking.ipFamily }}{{ end }}.yaml
       readOnly: true
       pathType: File
 {{- end }}
