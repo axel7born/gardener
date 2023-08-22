@@ -210,3 +210,11 @@ func (s *Seed) GetZonalLoadBalancerServiceExternalTrafficPolicy(zone string) *co
 	}
 	return s.GetLoadBalancerServiceExternalTrafficPolicy()
 }
+
+func (s *Seed) IsDualStack() bool {
+	seed := s.GetInfo()
+	if len(seed.Spec.Networks.IPFamilies) == 2 {
+		return true
+	}
+	return false
+}

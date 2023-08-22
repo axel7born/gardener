@@ -1159,6 +1159,13 @@ profiles:
   - op: add
     path: /deploy/helm/releases/0/valuesFiles/-
     value: example/gardener-local/gardenlet/values-ipv6.yaml
+- name: dual
+  activation:
+  - env: IPFAMILY=dual
+  patches:
+  - op: add
+    path: /deploy/helm/releases/0/valuesFiles/-
+    value: example/gardener-local/gardenlet/values-dual.yaml
 - name: debug
   activation:
   - command: debug

@@ -49,6 +49,7 @@ func NewIstio(
 	proxyProtocolEnabled bool,
 	vpnEnabled bool,
 	zones []string,
+	dualStack bool,
 ) (
 	istio.Interface,
 	error,
@@ -94,6 +95,7 @@ func NewIstio(
 		PriorityClassName:     priorityClassName,
 		ProxyProtocolEnabled:  proxyProtocolEnabled,
 		VPNEnabled:            vpnEnabled,
+		DualStack:             dualStack,
 	}
 
 	return istio.NewIstio(
@@ -107,6 +109,7 @@ func NewIstio(
 				PriorityClassName: priorityClassName,
 				TrustDomain:       gardencorev1beta1.DefaultDomain,
 				Zones:             zones,
+				DualStack:         dualStack,
 			},
 			IngressGateway: []istio.IngressGatewayValues{
 				defaultIngressGatewayConfig,
@@ -127,6 +130,7 @@ func AddIstioIngressGateway(
 	externalTrafficPolicy *corev1.ServiceExternalTrafficPolicyType,
 	serviceExternalIP *string,
 	zone *string,
+	dualStack bool,
 ) error {
 	gatewayValues := istioDeployer.GetValues().IngressGateway
 	if len(gatewayValues) < 1 {
@@ -165,6 +169,7 @@ func AddIstioIngressGateway(
 		TrustDomain:           gardencorev1beta1.DefaultDomain,
 		VPNEnabled:            templateValues.VPNEnabled,
 		Zones:                 zones,
+		DualStack:             dualStack,
 	})
 
 	return nil

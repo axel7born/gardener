@@ -518,6 +518,7 @@ func (r *Reconciler) newIstio(garden *operatorv1alpha1.Garden) (istio.Interface,
 		false,
 		false,
 		garden.Spec.RuntimeCluster.Provider.Zones,
+		false,
 	)
 }
 

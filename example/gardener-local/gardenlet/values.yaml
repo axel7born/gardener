@@ -83,6 +83,9 @@ config:
         name: seed-local
         namespace: garden
       networks:
+        ipFamilies:
+        - IPv6
+        - IPv4
         nodes: 172.18.0.0/16
         # Those CIDRs must match those specified in the kind Cluster configuration.
         pods: 10.1.0.0/16
