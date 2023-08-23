@@ -63,6 +63,11 @@ static_resources:
       socket_address:
         address: {{ .listenAddress | quote }}
         port_value: {{ .adminPort }}
+    additional_addresses:
+    - address:
+        socket_address:
+          address: "0.0.0.0"
+          port_value: {{ .adminPort }}
     filter_chains:
     - filters:
       - name: envoy.filters.network.http_connection_manager
