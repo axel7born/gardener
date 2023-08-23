@@ -66,7 +66,7 @@ func (b *Botanist) DeployAPIServerProxy(ctx context.Context) error {
 		return b.Shoot.Components.SystemComponents.APIServerProxy.Destroy(ctx)
 	}
 
-	b.Shoot.Components.SystemComponents.APIServerProxy.SetAdvertiseIPAddress(b.APIServerClusterIP)
+	b.Shoot.Components.SystemComponents.APIServerProxy.SetAdvertiseIPAddress("2002:db8:4::4")
 
 	return b.Shoot.Components.SystemComponents.APIServerProxy.Deploy(ctx)
 }
