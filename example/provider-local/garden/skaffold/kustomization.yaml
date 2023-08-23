@@ -3,3 +3,8 @@ kind: Kustomization
 
 resources:
 - ../base
+# This is needed to have the ipv6 localhost address on the status of service istio-ingressgateway.
+# However, I don't know if that matters. The service can be reached via ipv6 even if we have the
+# ipv4 address in the status.
+components:
+- ../ipv6
