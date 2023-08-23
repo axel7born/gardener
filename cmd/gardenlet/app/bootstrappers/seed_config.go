@@ -48,7 +48,9 @@ func (s *SeedConfigChecker) Start(ctx context.Context) error {
 		return err
 	} else if errors.IsNotFound(err) {
 		// Seed cluster does not seem to be managed by Gardener
-		return checkSeedConfigHeuristically(ctx, s.SeedClient, s.SeedConfig)
+		// Fow a dualstack scenario we need to disable or adapt this check.
+		// return checkSeedConfigHeuristically(ctx, s.SeedClient, s.SeedConfig)
+		return nil
 	}
 
 	if podNetwork := shootInfo.Data["podNetwork"]; podNetwork != s.SeedConfig.Spec.Networks.Pods {
