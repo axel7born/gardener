@@ -99,7 +99,7 @@ setup_loopback_device() {
   fi
   LOOPBACK_DEVICE=$(ip address | grep LOOPBACK | sed "s/^[0-9]\+: //g" | awk '{print $1}' | sed "s/:$//g")
   LOOPBACK_IP_ADDRESSES=(127.0.0.10 127.0.0.11 127.0.0.12)
-  if [[ "$IPFAMILY" == "ipv6" ]]; then
+  if [[ "$IPFAMILY" == "ipv6" ]] || [[ "$IPFAMILY" == "dual" ]]; then
     LOOPBACK_IP_ADDRESSES+=(::10 ::11 ::12)
   fi
   echo "Checking loopback device ${LOOPBACK_DEVICE}..."
@@ -163,6 +163,9 @@ setup_kind_network
 
 if [[ "$IPFAMILY" == "ipv6" ]]; then
   ADDITIONAL_ARGS="$ADDITIONAL_ARGS --values $CHART/values-ipv6.yaml"
+fi
+if [[ "$IPFAMILY" == "dual" ]]; then
+  ADDITIONAL_ARGS="$ADDITIONAL_ARGS --values $CHART/values-dual.yaml"
 fi
 
 if [[ "$IPFAMILY" == "ipv6" ]] && [[ "$MULTI_ZONAL" == "true" ]]; then
@@ -236,7 +239,7 @@ if [[ "$CLUSTER_NAME" == "gardener-local2-ha-single-zone" ]]; then
 fi
 
 ip_address_field="IPAddress"
-if [[ "$IPFAMILY" == "ipv6" ]]; then
+if [[ "$IPFAMILY" == "ipv6" ]] || [[ "$IPFAMILY" == "dual" ]] ; then
   ip_address_field="GlobalIPv6Address"
 fi
 
@@ -265,7 +268,14 @@ if [[ "$DEPLOY_REGISTRY" == "true" ]]; then
   kubectl apply -k "$(dirname "$0")/../example/gardener-local/registry" --server-side
   kubectl wait --for=condition=available deployment -l app=registry -n registry --timeout 5m
 fi
-kubectl apply -k "$(dirname "$0")/../example/gardener-local/calico/$IPFAMILY" --server-side
+
+if [[ "$IPFAMILY" == "ipv6" ]] ; then
+	kubectl apply -k "$(dirname "$0")/../example/gardener-local/calico/ipv6" --server-side
+fi
+if [[ "$IPFAMILY" == "dual" ]] ; then
+	kubectl apply -k "$(dirname "$0")/../example/gardener-local/calico/dual" --server-side
+fi
+
 kubectl apply -k "$(dirname "$0")/../example/gardener-local/metrics-server"   --server-side
 
 setup_containerd_registry_mirrors
