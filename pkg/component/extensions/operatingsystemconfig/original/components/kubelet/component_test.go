@@ -67,7 +67,7 @@ var _ = Describe("Component", func() {
 				"blub": "bar",
 			}
 
-			cliFlags := CLIFlags(ctx.KubernetesVersion, ctx.NodeLabels, ctx.CRIName, ctx.Images[images.ImageNamePauseContainer], ctx.KubeletCLIFlags)
+			cliFlags := CLIFlags(ctx.KubernetesVersion, ctx.NodeLabels, ctx.CRIName, ctx.Images[images.ImageNamePauseContainer], ctx.KubeletCLIFlags, false)
 			units, files, err := component.Config(ctx)
 
 			Expect(err).NotTo(HaveOccurred())

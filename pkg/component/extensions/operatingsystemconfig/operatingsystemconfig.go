@@ -128,6 +128,8 @@ type OriginalValues struct {
 	ValiIngressHostName string
 	// NodeLocalDNSEnabled indicates whether node local dns is enabled or not.
 	NodeLocalDNSEnabled bool
+	// IPFamily string
+	PrimaryIPFamily gardencorev1beta1.IPFamily
 }
 
 // New creates a new instance of Interface.
@@ -521,6 +523,7 @@ func (o *operatingSystemConfig) newDeployer(osc *extensionsv1alpha1.OperatingSys
 		valiIngressHostName:     o.values.ValiIngressHostName,
 		valitailEnabled:         o.values.ValitailEnabled,
 		nodeLocalDNSEnabled:     o.values.NodeLocalDNSEnabled,
+		primaryIPFamily:         o.values.PrimaryIPFamily,
 	}, nil
 }
 
@@ -582,6 +585,7 @@ type deployer struct {
 	valiIngressHostName     string
 	valitailEnabled         bool
 	nodeLocalDNSEnabled     bool
+	primaryIPFamily         gardencorev1beta1.IPFamily
 }
 
 // exposed for testing
@@ -633,6 +637,7 @@ func (d *deployer) deploy(ctx context.Context, operation string) (extensionsv1al
 			ValiIngress:             d.valiIngressHostName,
 			APIServerURL:            d.apiServerURL,
 			Sysctls:                 d.worker.Sysctls,
+			PreferIPv6:              d.primaryIPFamily == gardencorev1beta1.IPFamilyIPv6,
 		})
 		if err != nil {
 			return nil, err
