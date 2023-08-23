@@ -105,6 +105,7 @@ func defaultIstio(
 		true,
 		true,
 		seedObj.Spec.Provider.Zones,
+		seed.IsDualStack(),
 	)
 	if err != nil {
 		return nil, err
@@ -121,6 +122,7 @@ func defaultIstio(
 				seed.GetZonalLoadBalancerServiceExternalTrafficPolicy(zone),
 				nil,
 				&zone,
+				seed.IsDualStack(),
 			); err != nil {
 				return nil, err
 			}
@@ -138,6 +140,7 @@ func defaultIstio(
 			seed.GetLoadBalancerServiceExternalTrafficPolicy(),
 			handler.SNI.Ingress.ServiceExternalIP,
 			nil,
+			seed.IsDualStack(),
 		); err != nil {
 			return nil, err
 		}
@@ -154,6 +157,7 @@ func defaultIstio(
 					seed.GetZonalLoadBalancerServiceExternalTrafficPolicy(zone),
 					nil,
 					&zone,
+					seed.IsDualStack(),
 				); err != nil {
 					return nil, err
 				}

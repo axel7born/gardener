@@ -96,6 +96,10 @@ spec:
           value: "false"
         - name: PILOT_ENDPOINT_TELEMETRY_LABEL
           value: "true"
+{{- if eq .Values.dualStack true }}
+        - name: ISTIO_DUAL_STACK
+          value: "true"
+{{- end }}
         resources:
           requests:
             cpu: 250m
