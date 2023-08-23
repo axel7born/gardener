@@ -240,8 +240,8 @@ func validateSeedNetworks(seedNetworks core.SeedNetworks, fldPath *field.Path, i
 	}
 
 	var (
-		primaryIPFamily = helper.DeterminePrimaryIPFamily(seedNetworks.IPFamilies)
-		networks        []cidrvalidation.CIDR
+		//primaryIPFamily = helper.DeterminePrimaryIPFamily(seedNetworks.IPFamilies)
+		networks []cidrvalidation.CIDR
 	)
 
 	if !inTemplate || len(seedNetworks.Pods) > 0 {
@@ -263,7 +263,7 @@ func validateSeedNetworks(seedNetworks core.SeedNetworks, fldPath *field.Path, i
 	}
 
 	allErrs = append(allErrs, cidrvalidation.ValidateCIDRParse(networks...)...)
-	allErrs = append(allErrs, cidrvalidation.ValidateCIDRIPFamily(networks, string(primaryIPFamily))...)
+	//allErrs = append(allErrs, cidrvalidation.ValidateCIDRIPFamily(networks, string(primaryIPFamily))...)
 	allErrs = append(allErrs, cidrvalidation.ValidateCIDROverlap(networks, false)...)
 
 	vpnRange := cidrvalidation.NewCIDR(v1beta1constants.DefaultVPNRange, field.NewPath(""))
