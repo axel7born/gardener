@@ -904,6 +904,11 @@ func (v *vpnSeedServer) getEnvoyConfig() string {
         protocol: TCP
         address: "` + listenAddress + `"
         port_value: ` + fmt.Sprintf("%d", EnvoyPort) + `
+    additional_addresses:
+    - address:
+        socket_address:
+          address: "0.0.0.0"
+          port_value: ` + fmt.Sprintf("%d", EnvoyPort) + `
     listener_filters:
     - name: "envoy.filters.listener.tls_inspector"
       typed_config:
