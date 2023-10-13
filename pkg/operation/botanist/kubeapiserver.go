@@ -223,9 +223,9 @@ func (b *Botanist) computeKubeAPIServerSNIConfig() kubeapiserver.SNIConfig {
 	}
 	// for the controlplane of an ipv6 shoot in an ipv4 seed config.AdvertiseAddress has to be
 	// the same ipfamily as the services cidr.
-	// just try with a hardcoded address for now.
+
 	if len(b.Shoot.Networks.Services.IP) == net.IPv6len {
-		config.AdvertiseAddress = "2002:db8:4::4"
+		config.AdvertiseAddress = "64:ff9b::" + b.APIServerClusterIP
 	}
 	// Add control plane wildcard certificate to TLS SNI config if it is available.
 	if b.ControlPlaneWildcardCert != nil {

@@ -38,7 +38,6 @@ import (
 	kubeapiserverconstants "github.com/gardener/gardener/pkg/component/kubeapiserver/constants"
 	"github.com/gardener/gardener/pkg/controllerutils"
 	kubernetesutils "github.com/gardener/gardener/pkg/utils/kubernetes"
-	netutils "github.com/gardener/gardener/pkg/utils/net"
 )
 
 var (

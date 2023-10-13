@@ -16,6 +16,7 @@ package botanist
 
 import (
 	"context"
+	"net"
 
 	"github.com/gardener/gardener/imagevector"
 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
@@ -65,7 +66,10 @@ func (b *Botanist) DeployAPIServerProxy(ctx context.Context) error {
 		return b.Shoot.Components.SystemComponents.APIServerProxy.Destroy(ctx)
 	}
 
-	b.Shoot.Components.SystemComponents.APIServerProxy.SetAdvertiseIPAddress("2002:db8:4::4")
+	b.Shoot.Components.SystemComponents.APIServerProxy.SetAdvertiseIPAddress(b.APIServerClusterIP)
+	if len(b.Shoot.Networks.Services.IP) == net.IPv6len {
+		b.Shoot.Components.SystemComponents.APIServerProxy.SetAdvertiseIPAddress( "64:ff9b::" + b.APIServerClusterIP)
+	}
 
 	return b.Shoot.Components.SystemComponents.APIServerProxy.Deploy(ctx)
 }
