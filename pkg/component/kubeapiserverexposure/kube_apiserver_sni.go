@@ -42,7 +42,6 @@ import (
 	kubeapiserverconstants "github.com/gardener/gardener/pkg/component/kubeapiserver/constants"
 	"github.com/gardener/gardener/pkg/controllerutils"
 	kubernetesutils "github.com/gardener/gardener/pkg/utils/kubernetes"
-	netutils "github.com/gardener/gardener/pkg/utils/net"
 )
 
 // SNIValues configure the kube-apiserver service SNI.
@@ -109,7 +108,6 @@ func (s *sni) Deploy(ctx context.Context) error {
 	)
 
 	sniValues := s.valuesFunc()
-	sniValues.APIServerClusterIPPrefixLen = netutils.GetBitLen(sniValues.APIServerClusterIP)
 
 	if err := envoyFilterSpecTemplate.Execute(&envoyFilterSpec, envoyFilterTemplateValues{
 		SNIValues: sniValues,

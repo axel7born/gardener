@@ -137,7 +137,8 @@ func (b *Botanist) setAPIServerServiceClusterIP(clusterIP string) {
 		b.Shoot.SeedNamespace,
 		func() *kubeapiserverexposure.SNIValues {
 			return &kubeapiserverexposure.SNIValues{
-				APIServerClusterIP: clusterIP,
+				APIServerClusterIP: func () string { if len(b.Shoot.Networks.Services.IP) * 8 == 32 {return clusterIP} else {return "64:ff9b::" + clusterIP}}(),
+				APIServerClusterIPPrefixLen: len(b.Shoot.Networks.Services.IP) * 8,
 				NamespaceUID:       b.SeedNamespaceObject.UID,
 				Hosts: []string{
 					gardenerutils.GetAPIServerDomain(*b.Shoot.ExternalClusterDomain),
