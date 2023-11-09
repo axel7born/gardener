@@ -79,8 +79,8 @@ func (b *Botanist) DeployKubeAPIServerSNI(ctx context.Context) error {
 }
 
 func (b *Botanist) setAPIServerServiceClusterIP(clusterIP string) {
-	
-	if len(b.Shoot.Networks.Services.IP) * 8 == 32 {
+
+	if len(b.Shoot.Networks.Services.IP)*8 == 32 {
 		b.APIServerClusterIP = clusterIP
 	} else {
 		b.APIServerClusterIP = "64:ff9b::" + clusterIP

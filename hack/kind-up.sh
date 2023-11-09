@@ -269,12 +269,7 @@ if [[ "$DEPLOY_REGISTRY" == "true" ]]; then
   kubectl wait --for=condition=available deployment -l app=registry -n registry --timeout 5m
 fi
 
-if [[ "$IPFAMILY" == "ipv6" ]] ; then
-	kubectl apply -k "$(dirname "$0")/../example/gardener-local/calico/ipv6" --server-side
-fi
-if [[ "$IPFAMILY" == "dual" ]] ; then
-	kubectl apply -k "$(dirname "$0")/../example/gardener-local/calico/dual" --server-side
-fi
+kubectl apply -k "$(dirname "$0")/../example/gardener-local/calico/$IPFAMILY" --server-side
 
 kubectl apply -k "$(dirname "$0")/../example/gardener-local/metrics-server"   --server-side
 

@@ -314,7 +314,7 @@ func (i *istiod) generateIstiodChart() (*chartrenderer.RenderedChart, error) {
 		"portsNames": map[string]interface{}{
 			"metrics": istiodServicePortNameMetrics,
 		},
-		"image":      istiodValues.Image,
+		"image":     istiodValues.Image,
 		"dualStack": istiodValues.DualStack,
 	})
 }

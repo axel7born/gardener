@@ -106,12 +106,11 @@ type sni struct {
 
 type envoyFilterTemplateValues struct {
 	*APIServerProxy
-	IngressGatewayLabels        map[string]string
-	Name                        string
-	Namespace                   string
-	Host                        string
-	Port                        int
-	APIServerClusterIPPrefixLen int
+	IngressGatewayLabels map[string]string
+	Name                 string
+	Namespace            string
+	Host                 string
+	Port                 int
 }
 
 func (s *sni) Deploy(ctx context.Context) error {
@@ -130,16 +129,14 @@ func (s *sni) Deploy(ctx context.Context) error {
 
 	if values.APIServerProxy != nil {
 		envoyFilter := s.emptyEnvoyFilter()
-		sniValues.APIServerClusterIPPrefixLen = netutils.GetBitLen(values.APIServerProxy.APIServerClusterIP)
 
 		if err := envoyFilterSpecTemplate.Execute(&envoyFilterSpec, envoyFilterTemplateValues{
-			APIServerProxy:              values.APIServerProxy,
-			IngressGatewayLabels:        values.IstioIngressGateway.Labels,
-			Name:                        envoyFilter.Name,
-			Namespace:                   envoyFilter.Namespace,
-			Host:                        hostName,
-			Port:                        kubeapiserverconstants.Port,
-			APIServerClusterIPPrefixLen: sniValues.APIServerClusterIPPrefixLen,
+			APIServerProxy:       values.APIServerProxy,
+			IngressGatewayLabels: values.IstioIngressGateway.Labels,
+			Name:                 envoyFilter.Name,
+			Namespace:            envoyFilter.Namespace,
+			Host:                 hostName,
+			Port:                 kubeapiserverconstants.Port,
 		}); err != nil {
 			return err
 		}
