@@ -810,6 +810,15 @@ func (r *Reconciler) runReconcileShootFlow(ctx context.Context, o *operation.Ope
 			Dependencies: flow.NewTaskIDs(deployWorker, waitUntilWorkerStatusUpdate, deployManagedResourceForGardenerNodeAgent),
 		})
 		_ = g.Add(flow.Task{
+			Name: "Checking dualstack migration",
+			Fn: flow.TaskFn(func(ctx context.Context) error {
+				// Check all nodes for podcidrs and remove annotation
+				return checkPodCIDRSinNodes(ctx, o)
+			}),
+			SkipIf:       o.Shoot.IsWorkerless,
+			Dependencies: flow.NewTaskIDs(waitUntilWorkerReady),
+		})
+		_ = g.Add(flow.Task{
 			Name:         "Waiting until extension resources handled after workers are ready",
 			Fn:           botanist.Shoot.Components.Extensions.Extension.WaitAfterWorker,
 			SkipIf:       o.Shoot.IsWorkerless || skipReadiness,
@@ -1049,6 +1058,35 @@ func removeTaskAnnotation(ctx context.Context, o *operation.Operation, generatio
 		controllerutils.RemoveTasks(shoot.Annotations, tasksToRemove...)
 		return nil
 	})
+}
+
+func checkPodCIDRSinNodes(ctx context.Context, o *operation.Operation) error {
+	o.Logger.Info("Checking all nodes for podCIDRs")
+
+	if o.ShootClientSet != nil {
+		o.Logger.Info("Checking all nodes for podCIDRs with clientSet")
+		nodeList := &corev1.NodeList{}
+		if err := o.ShootClientSet.Client().List(ctx, nodeList); err != nil {
+			return err
+		}
+
+		allNodesIPv6 := true
+		for _, node := range nodeList.Items {
+			o.Logger.Info("Checking node", "node", node.Name)
+			allNodesIPv6 = allNodesIPv6 && len(node.Spec.PodCIDRs) == 2
+		}
+
+		if allNodesIPv6 {
+			o.Logger.Info("All nodes have dualstack podCIDRs")
+			if err := o.Shoot.UpdateInfo(ctx, o.GardenClient, false, func(shoot *gardencorev1beta1.Shoot) error {
+				delete(shoot.ObjectMeta.Annotations, v1beta1constants.ShootMigrateNetwork)
+				return nil
+			}); err != nil {
+				return nil
+			}
+		}
+	}
+	return nil
 }
 
 // TODO(oliver-goetz): Remove this when removing NodeAgentAuthorizer feature gate.

@@ -546,6 +546,16 @@ func sortByIPFamilies(ipfamilies []gardencorev1beta1.IPFamily, cidr []net.IPNet)
 	return result
 }
 
+func getIPv4CIDRs(cidrs []net.IPNet) []net.IPNet {
+	var result []net.IPNet
+	for _, c := range cidrs {
+		if c.IP.To4() != nil {
+			result = append(result, c)
+		}
+	}
+	return result
+}
+
 // ToNetworks return a network with computed cidrs and ClusterIPs
 // for a Shoot
 func ToNetworks(shoot *gardencorev1beta1.Shoot, workerless bool) (*Networks, error) {
@@ -600,6 +610,12 @@ func ToNetworks(shoot *gardencorev1beta1.Shoot, workerless bool) (*Networks, err
 		} else {
 			nodes = sortByIPFamilies(shoot.Spec.Networking.IPFamilies, result)
 		}
+	}
+
+	if shoot.Annotations[v1beta1constants.ShootMigrateNetwork] == "true" {
+		nodes = getIPv4CIDRs(nodes)
+		services = getIPv4CIDRs(services)
+		pods = getIPv4CIDRs(pods)
 	}
 
 	for _, cidr := range services {
