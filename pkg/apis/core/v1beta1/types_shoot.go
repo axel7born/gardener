@@ -1912,6 +1912,8 @@ const (
 	ShootAPIServerProxyUsesHTTPProxy ConditionType = "APIServerProxyUsesHTTPProxy"
 	// ShootReadyForMigration is a constant for a condition type indicating whether the Shoot can be migrated.
 	ShootReadyForMigration ConditionType = "ReadyForMigration"
+	// ShootToDualStackMigration is a constant for a condition type indicating whether the Shoot is migrated to dual stack.
+	ShootToDualStackMigration ConditionType = "ToDualStackMigration"
 )
 
 // ShootPurpose is a type alias for string.

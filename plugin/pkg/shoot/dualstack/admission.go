@@ -65,7 +65,6 @@ func (c *ShootDualstackMigration) Admit(_ context.Context, a admission.Attribute
 			if shoot.ObjectMeta.Annotations == nil {
 				shoot.ObjectMeta.Annotations = make(map[string]string)
 			}
-			shoot.ObjectMeta.Annotations[v1beta1constants.ShootMigrateNetwork] = "true"
 			controllerutils.AddTasks(shoot.ObjectMeta.Annotations, v1beta1constants.ShootTaskDeployInfrastructure)
 		}
 	}

@@ -304,10 +304,6 @@ const (
 	// resource when cleaning a shoot during the deletion flow.
 	ShootNoCleanup = "shoot.gardener.cloud/no-cleanup"
 
-	// ShootMigrateNetwork is a constant for an annotation on a Shoot resource stating that the network of the Shoot
-	// is being migrated.
-	ShootMigrateNetwork = "shoot.gardener.cloud/migrate-network"
-
 	// ShootAlphaControlPlaneScaleDownDisabled is a constant for an annotation on the Shoot resource stating that the
 	// automatic scale-down shall be disabled for the etcd, kube-apiserver, kube-controller-manager.
 	// Note that this annotation is alpha and can be removed anytime without further notice. Only use it if you know

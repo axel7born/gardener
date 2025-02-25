@@ -123,6 +123,9 @@ func (r *Reconciler) runReconcileShootFlow(ctx context.Context, o *operation.Ope
 	}
 
 	if hasNodesCIDR {
+
+		o.Shoot.CheckDualStackMigrateNetworks(ctx, botanist.GardenClient, botanist.Clock)
+
 		networks, err := shoot.ToNetworks(o.Shoot.GetInfo(), o.Shoot.IsWorkerless)
 		if err != nil {
 			return v1beta1helper.NewWrappedLastErrors(v1beta1helper.FormatLastErrDescription(err), err)
@@ -1078,8 +1081,11 @@ func checkPodCIDRSinNodes(ctx context.Context, o *operation.Operation) error {
 
 		if allNodesIPv6 {
 			o.Logger.Info("All nodes have dualstack podCIDRs")
-			if err := o.Shoot.UpdateInfo(ctx, o.GardenClient, false, func(shoot *gardencorev1beta1.Shoot) error {
-				delete(shoot.ObjectMeta.Annotations, v1beta1constants.ShootMigrateNetwork)
+			if err := o.Shoot.UpdateInfoStatus(ctx, o.GardenClient, true, func(shoot *gardencorev1beta1.Shoot) error {
+				condition := v1beta1helper.GetOrInitConditionWithClock(o.Clock, shoot.Status.Constraints, gardencorev1beta1.ShootToDualStackMigration)
+				condition = v1beta1helper.UpdatedConditionWithClock(o.Clock, condition, gardencorev1beta1.ConditionFalse, "ToDualStackMigration", "The shoot is migrated to dual-stack networking.")
+				o.Logger.Info("Merge conditions", "condition", condition)
+				shoot.Status.Constraints = v1beta1helper.MergeConditions(shoot.Status.Constraints, condition)
 				return nil
 			}); err != nil {
 				return nil

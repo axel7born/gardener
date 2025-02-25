@@ -18,8 +18,9 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/sets"
+	"k8s.io/utils/clock"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-
+	"github.com/gardener/gardener/pkg/controllerutils"
 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
 	v1beta1helper "github.com/gardener/gardener/pkg/apis/core/v1beta1/helper"
@@ -556,6 +557,24 @@ func getIPv4CIDRs(cidrs []net.IPNet) []net.IPNet {
 	return result
 }
 
+func (s *Shoot) CheckDualStackMigrateNetworks(ctx context.Context, gardenClient client.Client, clock clock.Clock) bool {
+	shoot := s.GetInfo()
+	if len(shoot.Spec.Networking.IPFamilies) == 2 && shoot.Status.Networking != nil && len(shoot.Status.Networking.Nodes) == 1 {
+		// there is a migration in progress
+		s.UpdateInfoStatus(ctx, gardenClient, true, func(shoot *gardencorev1beta1.Shoot) error {
+
+			if v1beta1helper.GetCondition(shoot.Status.Constraints, gardencorev1beta1.ShootToDualStackMigration) == nil {
+				controllerutils.AddTasks(shoot.ObjectMeta.Annotations, v1beta1constants.ShootTaskDeployInfrastructure)
+			}
+			condition := v1beta1helper.GetOrInitConditionWithClock(clock, shoot.Status.Constraints, gardencorev1beta1.ShootToDualStackMigration)
+			condition = v1beta1helper.UpdatedConditionWithClock(clock, condition, gardencorev1beta1.ConditionTrue, "ToDualStackMigration", "The shoot is migrating to dual-stack networking.")
+			shoot.Status.Constraints = v1beta1helper.MergeConditions(shoot.Status.Constraints, condition)
+			return nil
+		})
+	}
+	return false
+}
+
 // ToNetworks return a network with computed cidrs and ClusterIPs
 // for a Shoot
 func ToNetworks(shoot *gardencorev1beta1.Shoot, workerless bool) (*Networks, error) {
@@ -612,7 +631,9 @@ func ToNetworks(shoot *gardencorev1beta1.Shoot, workerless bool) (*Networks, err
 		}
 	}
 
-	if shoot.Annotations[v1beta1constants.ShootMigrateNetwork] == "true" {
+	condition := v1beta1helper.GetCondition(shoot.Status.Constraints, gardencorev1beta1.ShootToDualStackMigration)
+
+	if condition != nil && condition.Status == gardencorev1beta1.ConditionTrue {
 		nodes = getIPv4CIDRs(nodes)
 		services = getIPv4CIDRs(services)
 		pods = getIPv4CIDRs(pods)
