@@ -23,7 +23,6 @@ import (
 	seedvalidator "github.com/gardener/gardener/plugin/pkg/seed/validator"
 	shootdns "github.com/gardener/gardener/plugin/pkg/shoot/dns"
 	shootdnsrewriting "github.com/gardener/gardener/plugin/pkg/shoot/dnsrewriting"
-	shootdualstackmigration "github.com/gardener/gardener/plugin/pkg/shoot/dualstack"
 	shootexposureclass "github.com/gardener/gardener/plugin/pkg/shoot/exposureclass"
 	shootmanagedseed "github.com/gardener/gardener/plugin/pkg/shoot/managedseed"
 	shootnodelocaldns "github.com/gardener/gardener/plugin/pkg/shoot/nodelocaldns"
@@ -48,7 +47,6 @@ func RegisterAllAdmissionPlugins(plugins *admission.Plugins) {
 	shootdns.Register(plugins)
 	shootmanagedseed.Register(plugins)
 	shootnodelocaldns.Register(plugins)
-	shootdualstackmigration.Register(plugins)
 	shootdnsrewriting.Register(plugins)
 	shootvalidator.Register(plugins)
 	seedvalidator.Register(plugins)

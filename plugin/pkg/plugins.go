@@ -58,8 +58,6 @@ const (
 	PluginNameShootQuotaValidator = "ShootQuotaValidator"
 	// PluginNameShootTolerationRestriction is the name of the ShootTolerationRestriction admission plugin.
 	PluginNameShootTolerationRestriction = "ShootTolerationRestriction"
-	// PluginNameShootDualstackMigration is the name of the ShootDualstackMigration admission plugin.
-	PluginNameShootDualstackMigration = "ShootDualstackMigration"
 	// PluginNameShootValidator is the name of the ShootValidator admission plugin.
 	PluginNameShootValidator = "ShootValidator"
 	// PluginNameShootVPAEnabledByDefault is the name of the ShootVPAEnabledByDefault admission plugin.
@@ -76,7 +74,6 @@ func AllPluginNames() []string {
 		PluginNameExtensionValidator,                // ExtensionValidator
 		PluginNameExtensionLabels,                   // ExtensionLabels
 		PluginNameShootTolerationRestriction,        // ShootTolerationRestriction
-		PluginNameShootDualstackMigration,           // ShootDualstackMigration
 		PluginNameShootExposureClass,                // ShootExposureClass
 		PluginNameShootDNS,                          // ShootDNS
 		PluginNameShootManagedSeed,                  // ShootManagedSeed
@@ -120,7 +117,6 @@ func DefaultOnPlugins() sets.Set[string] {
 		PluginNameExtensionValidator,         // ExtensionValidator
 		PluginNameExtensionLabels,            // ExtensionLabels
 		PluginNameShootTolerationRestriction, // ShootTolerationRestriction
-		PluginNameShootDualstackMigration,
 		PluginNameShootExposureClass,              // ShootExposureClass
 		PluginNameShootDNS,                        // ShootDNS
 		PluginNameShootManagedSeed,                // ShootManagedSeed

@@ -20,7 +20,6 @@ import (
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/utils/clock"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"github.com/gardener/gardener/pkg/controllerutils"
 	gardencorev1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
 	v1beta1helper "github.com/gardener/gardener/pkg/apis/core/v1beta1/helper"
@@ -562,15 +561,19 @@ func (s *Shoot) CheckDualStackMigrateNetworks(ctx context.Context, gardenClient 
 	if len(shoot.Spec.Networking.IPFamilies) == 2 && shoot.Status.Networking != nil && len(shoot.Status.Networking.Nodes) == 1 {
 		// there is a migration in progress
 		s.UpdateInfoStatus(ctx, gardenClient, true, func(shoot *gardencorev1beta1.Shoot) error {
-
-			if v1beta1helper.GetCondition(shoot.Status.Constraints, gardencorev1beta1.ShootToDualStackMigration) == nil {
-				controllerutils.AddTasks(shoot.ObjectMeta.Annotations, v1beta1constants.ShootTaskDeployInfrastructure)
-			}
 			condition := v1beta1helper.GetOrInitConditionWithClock(clock, shoot.Status.Constraints, gardencorev1beta1.ShootToDualStackMigration)
 			condition = v1beta1helper.UpdatedConditionWithClock(clock, condition, gardencorev1beta1.ConditionTrue, "ToDualStackMigration", "The shoot is migrating to dual-stack networking.")
 			shoot.Status.Constraints = v1beta1helper.MergeConditions(shoot.Status.Constraints, condition)
 			return nil
 		})
+	} else if len(shoot.Spec.Networking.IPFamilies) == 2 && shoot.Status.Networking != nil && len(shoot.Status.Networking.Nodes) == 2 {
+		condition := v1beta1helper.GetCondition(shoot.Status.Constraints, gardencorev1beta1.ShootToDualStackMigration)
+		if condition != nil {
+			s.UpdateInfoStatus(ctx, gardenClient, true, func(shoot *gardencorev1beta1.Shoot) error {
+				v1beta1helper.RemoveConditions(shoot.Status.Constraints, gardencorev1beta1.ShootToDualStackMigration)
+				return nil
+			})
+		}
 	}
 	return false
 }
