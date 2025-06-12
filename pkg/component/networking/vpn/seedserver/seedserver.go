@@ -319,10 +319,6 @@ func (v *vpnSeedServer) podTemplate(configMap *corev1.ConfigMap, secretCAVPN, se
 		ipFamilies = append(ipFamilies, string(v))
 	}
 
-	nodeNetwork := ""
-	if len(v.values.Network.NodeCIDRs) > 0 {
-		nodeNetwork = v.values.Network.NodeCIDRs[0].String()
-	}
 
 	ports := []corev1.ContainerPort{
 		{
