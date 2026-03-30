@@ -4,7 +4,7 @@ metadata:
   name: istio-ingressgateway
   namespace: test-ingress
   labels:
-    app.kubernetes.io/version: 1.27.1
+    app.kubernetes.io/version: 1.29.1
     app: istio-ingressgateway
     foo: bar
 spec:
@@ -25,9 +25,10 @@ spec:
         foo: bar
         to-target: allowed
         service.istio.io/canonical-name: "istio-ingressgateway"
-        service.istio.io/canonical-revision: "1.25"
+        service.istio.io/canonical-revision: "1.29"
       annotations:
         sidecar.istio.io/inject: "false"
+        sidecar.istio.io/statsEvictionInterval: "6m"
         proxy.istio.io/config: |-
           protocolDetectionTimeout: 100ms
           runtimeValues:
@@ -113,6 +114,7 @@ spec:
             valueFrom:
               resourceFieldRef:
                 resource: limits.cpu
+                divisor: "1"
           - name: SERVICE_ACCOUNT
             valueFrom:
               fieldRef:
