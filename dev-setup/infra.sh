@@ -56,8 +56,8 @@ case "$COMMAND" in
     # On the host, we bind the registry to localhost (see infra/docker-compose.yaml), because 127.0.0.1 and ::1
     # are configured as HTTP-only (insecure-registries) by default in Docker, which allows `docker push` without
     # changing the Docker daemon config.
-    # From within the containers (e.g., the kind nodes), the registry domain is resolved via Docker's built-in
-    # DNS server to the IP of the registry container because of the host alias configured in docker compose.
+    # From within the containers (e.g., the kind nodes), the registry domain is resolved via bind9 to the registry
+    # container's stable bridge IP (172.18.0.3), which is pinned via ipv4_address in docker-compose.yaml.
     #
     # We could also bind the registry to an 172.18.255.* address similar to bind9 to make the registry reachable
     # from the host and containers via the same IP. This would be cleaner, because we wouldn't need to add entries
@@ -234,7 +234,41 @@ EOF
 
     setup_kind_network
 
+    # On Docker Desktop 4.77+, containers in the kind network no longer have direct outbound internet access.
+    # The distribution registry v3.1.1 probes the upstream HTTPS endpoint at startup; without internet access it
+    # panics and crash-loops, preventing image pulls from working. Docker Desktop exposes an HTTP CONNECT proxy
+    # at 192.168.65.7:3128 (its VpnkitCIDR gateway) that does have internet access. We route the registry-cache
+    # containers through this proxy so the startup probe succeeds.
+    setup_registry_cache_proxy() {
+      if [[ "${CI:-false}" == "true" ]]; then
+        return
+      fi
+
+      if ! docker info 2>/dev/null | grep -q 'Operating System: Docker Desktop'; then
+        return
+      fi
+
+      # Reuse the already-mutated file if change_registry_upstream_urls_to_prow_caches already made a copy;
+      # otherwise make our own copy so the source file is never modified at runtime.
+      if [[ "$INFRA_COMPOSE_FILE" != *-prow.yaml ]]; then
+        local mutated_compose_file="${INFRA_COMPOSE_FILE%.yaml}-docker-desktop.yaml"
+        cp "$INFRA_COMPOSE_FILE" "$mutated_compose_file"
+        INFRA_COMPOSE_FILE="$mutated_compose_file"
+      fi
+
+      echo "> Docker Desktop detected: configuring registry-cache containers to use internal proxy for upstream connectivity..."
+
+      local proxy="http://192.168.65.7:3128"
+      local no_proxy="172.18.0.0/24,localhost,127.0.0.1"
+
+      for key in gcr k8s quay europe-docker-pkg-dev; do
+        yq -i ".services.registry-cache-${key}.environment.HTTPS_PROXY = \"${proxy}\"" "$INFRA_COMPOSE_FILE"
+        yq -i ".services.registry-cache-${key}.environment.NO_PROXY = \"${no_proxy}\"" "$INFRA_COMPOSE_FILE"
+      done
+    }
+
     change_registry_upstream_urls_to_prow_caches
+    setup_registry_cache_proxy
 
     docker compose -f "$INFRA_COMPOSE_FILE" up -d
 

@@ -11,17 +11,17 @@ $TTL    30
 
 ; Name Servers
 @       IN      NS      ns.local.gardener.cloud.
-ns      IN      A       172.18.255.53
+ns      IN      A       172.18.0.2
 ns      IN      AAAA    fd00:ff::53
 
-; Delegate the registry and registry-cache zone to Docker's built-in DNS server which resolves
-; the host aliases configured in the docker compose file.
-; We wouldn't need this if we had separate zones for registry records outside of local.gardener.cloud.
-; Note that, on the host, registry.local.gardener.cloud points to 127.0.0.1 and ::1 respectively as configured
-; in /etc/hosts (see ensure_local_registry_hosts in 'dev-setup/kind.sh up'), so the delegation here only applies to containers.
-registry        IN      NS      docker-dns.local.gardener.cloud.
-registry-cache  IN      NS      docker-dns.local.gardener.cloud.
-docker-dns      IN      A       127.0.0.11
+; A records for registry containers using their stable bridge IPs (set via ipv4_address in docker-compose.yaml).
+; Previously this used NS delegation to Docker's built-in DNS server (127.0.0.11), but Docker Desktop 4.77+
+; returns only IPv6 addresses for container aliases resolved via that DNS, breaking IPv4-only containerd clients.
+registry                              IN  A  172.18.0.3
+gcr.registry-cache                    IN  A  172.18.0.4
+k8s.registry-cache                    IN  A  172.18.0.5
+quay.registry-cache                   IN  A  172.18.0.6
+europe-docker-pkg-dev.registry-cache  IN  A  172.18.0.7
 
 ; The self-hosted shoot API server is accessible from the host machine via the gind Envoy load balancer.
 ; The loopback device for this IP is set up in 'dev-setup/infra.sh setup-loopback-devices'.

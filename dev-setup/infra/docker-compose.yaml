@@ -24,6 +24,7 @@ services:
       /usr/sbin/named -g -u bind"
     networks:
       kind:
+        ipv4_address: 172.18.0.2
   registry:
     container_name: registry
     image: europe-docker.pkg.dev/gardener-project/releases/3rd/registry:3.1.1
@@ -37,6 +38,7 @@ services:
       kind:
         aliases:
           - registry.local.gardener.cloud
+        ipv4_address: 172.18.0.3
   registry-cache-gcr:
     container_name: registry-cache-gcr
     image: europe-docker.pkg.dev/gardener-project/releases/3rd/registry:3.1.1
@@ -50,6 +52,7 @@ services:
       kind:
         aliases:
           - gcr.registry-cache.local.gardener.cloud
+        ipv4_address: 172.18.0.4
   registry-cache-k8s:
     container_name: registry-cache-k8s
     image: europe-docker.pkg.dev/gardener-project/releases/3rd/registry:3.1.1
@@ -63,6 +66,7 @@ services:
       kind:
         aliases:
           - k8s.registry-cache.local.gardener.cloud
+        ipv4_address: 172.18.0.5
   registry-cache-quay:
     container_name: registry-cache-quay
     image: europe-docker.pkg.dev/gardener-project/releases/3rd/registry:3.1.1
@@ -76,6 +80,7 @@ services:
       kind:
         aliases:
           - quay.registry-cache.local.gardener.cloud
+        ipv4_address: 172.18.0.6
   registry-cache-europe-docker-pkg-dev:
     container_name: registry-cache-europe-docker-pkg-dev
     image: europe-docker.pkg.dev/gardener-project/releases/3rd/registry:3.1.1
@@ -89,6 +94,7 @@ services:
       kind:
         aliases:
           - europe-docker-pkg-dev.registry-cache.local.gardener.cloud
+        ipv4_address: 172.18.0.7
 networks:
   kind:
     external: true
